@@ -1,0 +1,63 @@
+FROM debian:stretch
+
+ARG I2P_VERSION="0.9.38-1ubuntu1"
+ENV I2P_DIR /usr/share/i2p
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get -y update
+RUN apt-get install -y --no-install-recommends apt-utils
+# Enable UTF-8, mostly for I2PSnark
+# Set the locale
+RUN apt-get -y install locales
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+RUN /usr/sbin/update-locale LANG=${LANG} LANGUAGE=${LANGUAGE}
+
+RUN apt-get -y install apt-transport-https gnupg && \
+    apt-get clean
+
+RUN echo "deb https://deb.i2p2.de/ stretch main" > /etc/apt/sources.list.d/i2p.list && \
+    apt-key adv --no-tty --fetch-keys https://geti2p.net/_static/i2p-debian-repo.key.asc
+RUN apt-get -y update && \
+    apt-get -y install \
+	  procps \
+	  i2p="${I2P_VERSION}" \
+	  i2p-keyring \
+	&& \
+    echo "RUN_AS_USER=i2psvc" >> /etc/default/i2p && \
+    apt-get clean && \
+    rm -rf /var/lib/i2p && \
+	mkdir -p /var/lib/i2p/i2p-config && \
+	chown -R i2psvc:i2psvc /var/lib/i2p && \
+    rm -rf /var/lib/apt/lists/* /var/tmp/* /tmp/*
+ 
+RUN sed -i 's/127\.0\.0\.1/0.0.0.0/g' ${I2P_DIR}/i2ptunnel.config && \
+    sed -i 's/::1,127\.0\.0\.1/0.0.0.0/g' ${I2P_DIR}/clients.config && \
+    printf "i2cp.tcp.bindAllInterfaces=true\n" >> ${I2P_DIR}/router.config && \
+    printf "i2np.ipv4.firewalled=true\ni2np.ntcp.ipv6=false\n" >> ${I2P_DIR}/router.config && \
+    printf "i2np.udp.ipv6=false\ni2np.upnp.enable=false\n" >> ${I2P_DIR}/router.config
+
+##
+# Expose some ports used by I2P
+# Description at https://geti2p.net/ports
+#
+# Main ports:
+# 2827 - BOB port
+# 4444 — HTTP proxy
+# 6668 — Proxy to Irc2P
+# 7656 - SAM port
+# 7657 — router console
+# 7658 — self-hosted eepsite
+# 7659 — SMTP proxy to smtp.postman.i2p
+# 7660 — POP3 proxy to pop.postman.i2p
+# 8998 — Proxy to mtn.i2p-projekt.i2p
+##
+EXPOSE 2827 7650 7654 7655 7656 7657 7658 7659 7660 7661 7662 4444 6668 8998
+VOLUME /var/lib/i2p
+USER i2psvc
+ENTRYPOINT ["/usr/bin/i2prouter"]
+CMD ["console"]
+
