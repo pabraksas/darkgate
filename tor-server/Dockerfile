@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:edge
 LABEL maintainer="goeran.poehner@gmail.com"
 LABEL description="Tor server"
 
