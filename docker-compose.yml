@@ -11,7 +11,7 @@ services:
   i2p-server:
     build:
       context: ./i2p-server
-    image: darkgate/i2p-server:2019.10.26
+    image: darkgate/i2p-server:2019.10.27
     ports:
       - 2827:2827 # BOB port
       - 4444:4444 # HTTP proxy
