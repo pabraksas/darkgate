@@ -452,7 +452,7 @@ filterfile user.filter      # User customizations
 #      Any log files must be writable by whatever user Privoxy is
 #      being run as (on Unix, default user id is "privoxy").
 #
-logfile logfile
+logfile privoxy.log
 #
 #  2.7. trustfile
 #  ===============
@@ -592,6 +592,10 @@ logfile logfile
 #debug  1024 # Actions that are applied to all sites and maybe overruled later on.
 #debug  4096 # Startup banner and warnings
 #debug  8192 # Non-fatal errors
+
+# uncomment for develop mode
+#debug 512
+
 #
 #  3.2. single-threaded
 #  =====================
@@ -2008,7 +2012,7 @@ socket-timeout 300
 #  If "log-messages" is set to 1, Privoxy copies log messages to the
 #  console window. The log detail depends on the debug directive.
 #
-#log-messages   1
+log-messages   1
 #
 #
 #

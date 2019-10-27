@@ -28,7 +28,7 @@ services:
   privoxy-server:
     build: 
       context: ./privoxy-server
-    image: darkgate/privoxy-server:2018.02.03
+    image: darkgate/privoxy-server:2019.10.26
     volumes:
       - type: bind
         source: ./privoxy-server/config
