@@ -1,6 +1,6 @@
 FROM debian:stretch
 
-ARG I2P_VERSION="0.9.38-1ubuntu1"
+ARG I2P_VERSION="0.9.43p-1~trusty+1"
 ENV I2P_DIR /usr/share/i2p
 ENV DEBIAN_FRONTEND noninteractive
 
